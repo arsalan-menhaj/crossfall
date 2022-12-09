@@ -1,6 +1,19 @@
-import 'package:flutter/material.dart';
+import 'package:universal_io/io.dart';
 
-void main() => runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+final dir = new Directory('../assets');
+String fileListString = '';
+
+Future<void> main() async {
+  List<FileSystemEntity> fileList = await dir.list().toList();
+  fileListString = fileList.map((e) => e.path).join(',');
+
+  runApp(const MyApp());
+}
+
+//void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -38,6 +51,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             transitionBuilder: (Widget child, Animation<double> animation) {
               return RotationTransition(turns: animation, child: child);
             },
+            switchOutCurve: Curves.easeInOutCubic,
+            switchInCurve: Curves.easeInOutCubic,
             child: Text(
               '$_count',
               // This key causes the AnimatedSwitcher to interpret this as a "new"
@@ -55,6 +70,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               });
             },
           ),
+          Text(fileListString)
         ],
       ),
     );
