@@ -1,19 +1,21 @@
-import 'package:universal_io/io.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-final dir = new Directory('../assets');
-String fileListString = '';
+final List<String> svgNames = [
+  'circle-svgrepo-com.svg',
+  'triangle-svgrepo-com.svg',
+  'square-bold-svgrepo-com.svg',
+  'close-svgrepo-com.svg'
+];
+final List<Widget> svgList = svgNames
+    .map((name) => SvgPicture.asset(
+          name,
+        ))
+    .toList();
 
-Future<void> main() async {
-  List<FileSystemEntity> fileList = await dir.list().toList();
-  fileListString = fileList.map((e) => e.path).join(',');
-
+void main() {
   runApp(const MyApp());
 }
-
-//void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,7 +39,7 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _count = 0;
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,30 +49,29 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return RotationTransition(turns: animation, child: child);
-            },
-            switchOutCurve: Curves.easeInOutCubic,
-            switchInCurve: Curves.easeInOutCubic,
-            child: Text(
-              '$_count',
-              // This key causes the AnimatedSwitcher to interpret this as a "new"
-              // child each time the count changes, so that it will begin its animation
-              // when the count changes.
-              key: ValueKey<int>(_count),
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ),
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              switchOutCurve: Curves.linear,
+              switchInCurve: Curves.linear,
+              child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  key: ValueKey<int>(_currentIndex),
+                  child: svgList[_currentIndex])),
           ElevatedButton(
             child: const Text('Increment'),
             onPressed: () {
               setState(() {
-                _count += 1;
+                if (_currentIndex < svgNames.length - 1) {
+                  _currentIndex++;
+                } else {
+                  _currentIndex = 0;
+                }
               });
             },
           ),
-          Text(fileListString)
         ],
       ),
     );
