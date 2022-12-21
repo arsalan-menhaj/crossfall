@@ -48,20 +48,21 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              switchOutCurve: Curves.linear,
-              switchInCurve: Curves.linear,
-              child: SizedBox(
-                  width: 200,
-                  height: 200,
-                  key: ValueKey<int>(_currentIndex),
-                  child: svgList[_currentIndex])),
           ElevatedButton(
-            child: const Text('Increment'),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, shadowColor: Colors.white),
+            child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                switchOutCurve: Curves.linear,
+                switchInCurve: Curves.linear,
+                child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    key: ValueKey<int>(_currentIndex),
+                    child: svgList[_currentIndex])),
             onPressed: () {
               setState(() {
                 if (_currentIndex < svgNames.length - 1) {
