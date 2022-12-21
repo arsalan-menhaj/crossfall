@@ -1,19 +1,21 @@
-import 'package:universal_io/io.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:crossfall/shapes/rounded_rectangle_painter.dart';
+import 'package:crossfall/shapes/triangle_painter.dart';
 
-final dir = new Directory('../assets');
-String fileListString = '';
+final List<String> svgNames = [
+  'square-svgrepo-com.svg',
+  'triangle-fill-svgrepo-com.svg',
+  'triangle-svgrepo-com.svg'
+];
 
-Future<void> main() async {
-  List<FileSystemEntity> fileList = await dir.list().toList();
-  fileListString = fileList.map((e) => e.path).join(',');
+final List<Widget> shapeList = [
+  CustomPaint(painter: TrianglePainter()),
+  CustomPaint(painter: RoundedRectanglePainter()),
+];
 
+void main() {
   runApp(const MyApp());
 }
-
-//void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,7 +39,8 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _count = 0;
+  int _currentIndex = 0;
+  int _counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,30 +50,28 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return RotationTransition(turns: animation, child: child);
-            },
-            switchOutCurve: Curves.easeInOutCubic,
-            switchInCurve: Curves.easeInOutCubic,
-            child: Text(
-              '$_count',
-              // This key causes the AnimatedSwitcher to interpret this as a "new"
-              // child each time the count changes, so that it will begin its animation
-              // when the count changes.
-              key: ValueKey<int>(_count),
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ),
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return RotationTransition(turns: animation, child: child);
+              },
+              switchOutCurve: Curves.easeInOutCubic,
+              switchInCurve: Curves.easeInOutCubic,
+              // child: SizedBox(
+              //     width: 300, height: 300, child: shapeList[_currentIndex])),
+              child: Text('$_counter')),
           ElevatedButton(
             child: const Text('Increment'),
             onPressed: () {
               setState(() {
-                _count += 1;
+                // if (_currentIndex < 1) {
+                //   _currentIndex++;
+                // } else {
+                //   _currentIndex = 0;
+                // }
+                _counter++;
               });
             },
           ),
-          Text(fileListString)
         ],
       ),
     );
