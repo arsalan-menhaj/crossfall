@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:crossfall/shapes/rounded_rectangle_painter.dart';
-import 'package:crossfall/shapes/triangle_painter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 final List<String> svgNames = [
-  'square-svgrepo-com.svg',
-  'triangle-fill-svgrepo-com.svg',
-  'triangle-svgrepo-com.svg'
+  'circle-svgrepo-com.svg',
+  'triangle-svgrepo-com.svg',
+  'square-bold-svgrepo-com.svg',
+  'close-svgrepo-com.svg'
 ];
-
-final List<Widget> shapeList = [
-  CustomPaint(painter: TrianglePainter()),
-  CustomPaint(painter: RoundedRectanglePainter()),
-];
+final List<Widget> svgList = svgNames
+    .map((name) => SvgPicture.asset(
+          name,
+        ))
+    .toList();
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,6 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _currentIndex = 0;
-  int _counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -52,23 +51,24 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
               transitionBuilder: (Widget child, Animation<double> animation) {
-                return RotationTransition(turns: animation, child: child);
+                return FadeTransition(opacity: animation, child: child);
               },
-              switchOutCurve: Curves.easeInOutCubic,
-              switchInCurve: Curves.easeInOutCubic,
-              // child: SizedBox(
-              //     width: 300, height: 300, child: shapeList[_currentIndex])),
-              child: Text('$_counter')),
+              switchOutCurve: Curves.linear,
+              switchInCurve: Curves.linear,
+              child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  key: ValueKey<int>(_currentIndex),
+                  child: svgList[_currentIndex])),
           ElevatedButton(
             child: const Text('Increment'),
             onPressed: () {
               setState(() {
-                // if (_currentIndex < 1) {
-                //   _currentIndex++;
-                // } else {
-                //   _currentIndex = 0;
-                // }
-                _counter++;
+                if (_currentIndex < svgNames.length - 1) {
+                  _currentIndex++;
+                } else {
+                  _currentIndex = 0;
+                }
               });
             },
           ),
