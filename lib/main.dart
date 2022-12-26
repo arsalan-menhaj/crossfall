@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'dart:async';
+
+const shapeChangeIntervalSeconds = 3;
+
 final List<String> svgNames = [
   'circle-svgrepo-com.svg',
   'triangle-svgrepo-com.svg',
@@ -20,7 +24,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  static const String _title = 'Flutter Code Sample';
+  static const String _title = 'Crossfall';
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +44,26 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _currentIndex = 0;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    void updateShapeState() {
+      setState(() {
+        if (_currentIndex < svgNames.length - 1) {
+          _currentIndex++;
+        } else {
+          _currentIndex = 0;
+        }
+      });
+    }
+
+    final switchTimer = Timer.periodic(
+        const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
+      timer.cancel();
+      updateShapeState();
+    });
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -50,7 +71,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         children: <Widget>[
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, shadowColor: Colors.white),
+                backgroundColor: _isPressed ? Colors.blueAccent : Colors.white,
+                shadowColor: Colors.white),
+            onPressed: () {
+              setState(() {
+                _isPressed = !_isPressed;
+              });
+            },
             child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
                 transitionBuilder: (Widget child, Animation<double> animation) {
@@ -63,15 +90,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     height: 200,
                     key: ValueKey<int>(_currentIndex),
                     child: svgList[_currentIndex])),
-            onPressed: () {
-              setState(() {
-                if (_currentIndex < svgNames.length - 1) {
-                  _currentIndex++;
-                } else {
-                  _currentIndex = 0;
-                }
-              });
-            },
           ),
         ],
       ),
