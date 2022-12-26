@@ -45,6 +45,7 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _currentIndex = 0;
   bool _isPressed = false;
+  Timer? switchTimer;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       });
     }
 
-    final switchTimer = Timer.periodic(
+    switchTimer?.cancel();
+    switchTimer = Timer.periodic(
         const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
       timer.cancel();
       updateShapeState();
@@ -76,6 +78,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             onPressed: () {
               setState(() {
                 _isPressed = !_isPressed;
+              });
+
+              switchTimer = Timer.periodic(
+                  const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
+                timer.cancel();
+                updateShapeState();
               });
             },
             child: AnimatedSwitcher(
