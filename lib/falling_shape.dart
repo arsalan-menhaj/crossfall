@@ -1,6 +1,8 @@
 // core
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'dart:async';
+import 'dart:io';
 
 // external packages
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,7 +23,11 @@ final List<Widget> svgList = svgNames
     .toList();
 
 class FallingShape extends StatefulWidget {
-  const FallingShape({super.key});
+  final int delay;
+  final int startingIndex;
+
+  const FallingShape(
+      {super.key, required this.delay, required this.startingIndex});
 
   @override
   State<FallingShape> createState() => _FallingShapeState();
@@ -31,6 +37,7 @@ class _FallingShapeState extends State<FallingShape>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   bool _isPressed = false;
+  bool _isFirstLoad = true;
   Timer? switchTimer;
 
   late final AnimationController _controller = AnimationController(
@@ -48,17 +55,18 @@ class _FallingShapeState extends State<FallingShape>
   void updateShapeState() {
     if (!_isPressed) {
       setState(() {
-        if (_currentIndex < svgNames.length - 1) {
-          _currentIndex++;
-        } else {
-          _currentIndex = 0;
-        }
+        _currentIndex = Random().nextInt(svgList.length);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isFirstLoad) {
+      _currentIndex = widget.startingIndex;
+      _isFirstLoad = false;
+    }
+
     switchTimer?.cancel();
     switchTimer = Timer.periodic(
         const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
