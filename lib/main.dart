@@ -47,9 +47,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   bool _isPressed = false;
   Timer? switchTimer;
 
-  @override
-  Widget build(BuildContext context) {
-    void updateShapeState() {
+  void updateShapeState() {
+    if (!_isPressed) {
       setState(() {
         if (_currentIndex < svgNames.length - 1) {
           _currentIndex++;
@@ -58,7 +57,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         }
       });
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     switchTimer?.cancel();
     switchTimer = Timer.periodic(
         const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
@@ -73,17 +75,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         children: <Widget>[
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: _isPressed ? Colors.blueAccent : Colors.white,
-                shadowColor: Colors.white),
+                backgroundColor: _isPressed ? Colors.blueAccent : Colors.white),
             onPressed: () {
               setState(() {
                 _isPressed = !_isPressed;
-              });
-
-              switchTimer = Timer.periodic(
-                  const Duration(seconds: shapeChangeIntervalSeconds), (timer) {
-                timer.cancel();
-                updateShapeState();
               });
             },
             child: AnimatedSwitcher(
