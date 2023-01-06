@@ -1,5 +1,5 @@
 # Crossfall
 
-A simple puzzle game - a fusion between Tetris and Solitaire.
+A simple puzzle game that can be described as a fusion between Tetris and Solitaire.
 
 Created using the Flutter framework.
